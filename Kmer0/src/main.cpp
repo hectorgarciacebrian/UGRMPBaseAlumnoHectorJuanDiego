@@ -60,6 +60,8 @@ int main(int argc, char* argv[]) {
     // This is the array where the complementary kmers will be
     // saved
     Kmer complementaryKmers[DIM_ARRAY_KMERS];
+    int k, nkmers, index;
+    string intupString;
     
     // Read K (integer) and a string with the input nucleotides list
 

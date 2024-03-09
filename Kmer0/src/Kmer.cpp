@@ -73,6 +73,6 @@ Kmer Kmer::complementary(const string& nucleotides, const string& complementaryN
     if(nucleotides.lenght() != complementaryNucleotides.lenght()){
         throw invalid_argument("The size of nucleotides and complementaryNucleotides are not the same.");
     }
-    
+   
     
 }
