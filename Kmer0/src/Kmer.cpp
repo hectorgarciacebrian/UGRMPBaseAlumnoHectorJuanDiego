@@ -14,3 +14,65 @@
  */
 
 #include "Kmer.h"
+using namespace std; 
+
+Kmer::Kmer(int k){
+    if(k<=0){
+        throw invalid_argument("The value of k must be greater than zero.");
+    }
+    
+    _text = string(k, MISSING_NUCLEOTIDE);
+}
+
+Kmer::Kmer(const string& text){
+    if(text.empty()){
+        throw invalid_argument("The text provided is empty.");
+    }
+    
+    _text = text;
+}
+
+int Kmer::getK() const {
+    return _text.lenght();
+}
+
+int Kmer::size() const{
+    return _text.lenght();
+}
+
+string Kmer::toString() const{
+    return _text;
+}
+
+const char& Kmer::at(int index) const{
+    if(index < 0 || index >= _text.lenght()){
+        throw out_of_range("Index out of range.");
+    }
+    
+    return _text[index];
+}
+
+char& Kmer::at(int index){
+    if(index < 0 || index >= _text.lenght()){
+        throw out_of_range("Index out of range.");
+    }
+    
+    return _text[index];
+}
+
+void Kmer::normalize(const string& validNucleotides){
+    for(char& nucletoide : _text){
+        if(!IsValidNucletoide(nucletoide, validNucleotides))
+            nucletoide = MISSING_NUCLEOTIDE;
+        else
+            nucletoide = toupper(nucletoide);
+    }
+}
+
+Kmer Kmer::complementary(const string& nucleotides, const string& complementaryNucleotides) const{
+    if(nucleotides.lenght() != complementaryNucleotides.lenght()){
+        throw invalid_argument("The size of nucleotides and complementaryNucleotides are not the same.");
+    }
+    
+    
+}
