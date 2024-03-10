@@ -76,3 +76,25 @@ Kmer Kmer::complementary(const string& nucleotides, const string& complementaryN
    
     
 }
+
+bool IsValidNucletoide(char nucletoide, const string & validNucletoides){
+    for(char& item : validNucletoides){
+        if(item == nucletoide){
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void ToLower(Kmer& kmer){
+    for(char& item : kmer.toString){
+        item = tolower(item);
+    }
+}
+
+void ToUpper(Kmer& kmer){
+    for(char& item : kmer.toString){
+        item = toupper(item);
+    }
+}
