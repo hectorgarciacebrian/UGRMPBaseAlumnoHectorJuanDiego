@@ -33,11 +33,11 @@ Kmer::Kmer(const string& text){
 }
 
 int Kmer::getK() const {
-    return _text.lenght();
+    return _text.length();
 }
 
 int Kmer::size() const{
-    return _text.lenght();
+    return _text.length();
 }
 
 string Kmer::toString() const{
@@ -70,10 +70,22 @@ void Kmer::normalize(const string& validNucleotides){
 }
 
 Kmer Kmer::complementary(const string& nucleotides, const string& complementaryNucleotides) const{
+    string npos;
+    
     if(nucleotides.lenght() != complementaryNucleotides.lenght()){
         throw invalid_argument("The size of nucleotides and complementaryNucleotides are not the same.");
     }
-   
+    
+    string complementaryKmer = _text;
+    
+    for(char& nucletoides : complementaryKmer){
+        size_t index = nucleotides.find(toupper(nucletoides));
+        if(index != npos){
+            nucletoides = complementaryNucleotides[index];
+        }
+    }
+    
+    return Kmer(complementaryKmer);
     
 }
 

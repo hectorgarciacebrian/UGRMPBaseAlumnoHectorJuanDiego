@@ -1,4 +1,4 @@
-ls/*
+/*
  * Metodología de la Programación: Kmer0
  * Curso 2023/2024
  */
