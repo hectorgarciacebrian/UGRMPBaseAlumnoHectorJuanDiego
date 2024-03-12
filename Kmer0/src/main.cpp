@@ -9,6 +9,8 @@
  * @author Andrés Cano Utrera <acu@decsai.ugr.es>
  * @author Luis Castillo Vidal <L.Castillo@decsai.ugr.es>
  * @author Javier Martínez Baena <jbaena@ugr.es>
+ * @autor Heéctor García Cebrián
+ * @autor Juan Diego 
  *
  * Created on 24 October 2023, 13:58
  */

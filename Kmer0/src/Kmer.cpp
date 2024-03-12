@@ -100,13 +100,13 @@ bool IsValidNucletoide(char nucletoide, const string & validNucletoides){
 }
 
 void ToLower(Kmer& kmer){
-    for(char& item : kmer.toString){
+    for(char& item : kmer.toString()){
         item = tolower(item);
     }
 }
 
 void ToUpper(Kmer& kmer){
-    for(char& item : kmer.toString){
+    for(char& item : kmer.toString()){
         item = toupper(item);
     }
 }
