@@ -13,7 +13,7 @@
  * Created on 24 October 2023, 14:00
  */
 
-#include "Kmer.h"
+#include "../include/kmer.h"
 using namespace std; 
 
 Kmer::Kmer(int k){
@@ -32,12 +32,12 @@ Kmer::Kmer(const string& text){
     _text = text;
 }
 
-int Kmer::getK() const {
+int Kmer::size() const{
     return _text.length();
 }
 
-int Kmer::size() const{
-    return _text.length();
+int Kmer::getK() const {
+    return size();
 }
 
 string Kmer::toString() const{
@@ -45,7 +45,7 @@ string Kmer::toString() const{
 }
 
 const char& Kmer::at(int index) const{
-    if(index < 0 || index >= _text.lenght()){
+    if(index < 0 || index >= _text.length()){
         throw out_of_range("Index out of range.");
     }
     
@@ -53,7 +53,7 @@ const char& Kmer::at(int index) const{
 }
 
 char& Kmer::at(int index){
-    if(index < 0 || index >= _text.lenght()){
+    if(index < 0 || index >= _text.length()){
         throw out_of_range("Index out of range.");
     }
     
@@ -62,40 +62,42 @@ char& Kmer::at(int index){
 
 void Kmer::normalize(const string& validNucleotides){
     for(char& nucletoide : _text){
-        if(!IsValidNucletoide(nucletoide, validNucleotides))
-            nucletoide = MISSING_NUCLEOTIDE;
-        else
-            nucletoide = toupper(nucletoide);
+        for(int i=0; i<validNucleotides.length(); i++){
+            if(nucletoide != validNucleotides[i]){
+                nucletoide = MISSING_NUCLEOTIDE;
+            }
+            else{
+                nucletoide = toupper(nucletoide);
+            }
+        }
     }
 }
 
 Kmer Kmer::complementary(const string& nucleotides, const string& complementaryNucleotides) const{
-    string npos;
-    
-    if(nucleotides.lenght() != complementaryNucleotides.lenght()){
+    if(nucleotides.length() != complementaryNucleotides.length()){
         throw invalid_argument("The size of nucleotides and complementaryNucleotides are not the same.");
     }
     
-    string complementaryKmer = _text;
+    Kmer result(*this);
     
-    for(char& nucletoides : complementaryKmer){
-        size_t index = nucleotides.find(toupper(nucletoides));
-        if(index != npos){
-            nucletoides = complementaryNucleotides[index];
+    for(char& nucletoide : result._text){
+        size_t idx = nucleotides.find(toupper(nucletoide));
+        if(idx != string::npos){
+            nucletoide = complementaryNucleotides[idx];
         }
     }
     
-    return Kmer(complementaryKmer);
+    return result;
     
 }
 
 bool IsValidNucletoide(char nucletoide, const string & validNucletoides){
-    for(char& item : validNucletoides){
-        if(item == nucletoide){
+    for(int i=0; i<validNucletoides.length(); i++){
+        if(nucletoide == validNucletoides[i]){
             return true;
         }
     }
-
+    
     return false;
 }
 

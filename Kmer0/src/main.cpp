@@ -18,7 +18,7 @@
 #include <iostream>
 #include <string>
 
-#include "Kmer.h"
+#include "../include/kmer.h"
 
 using namespace std;
 
