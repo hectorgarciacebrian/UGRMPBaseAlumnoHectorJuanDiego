@@ -17,11 +17,12 @@
 using namespace std; 
 
 Kmer::Kmer(int k){
-    if(k<=0){
-        throw invalid_argument("The value of k must be greater than zero.");
+    if(k<1){
+        throw invalid_argument(string("Kmer(int k): ") + 
+                "invalid length " + to_string(k));
     }
     
-    _text = string(k, MISSING_NUCLEOTIDE);
+    this->_text = string(k, MISSING_NUCLEOTIDE);
 }
 
 Kmer::Kmer(const string& text){
