@@ -15,10 +15,51 @@
 
 
 #include "ArrayKmerFreqFunctions.h"
+#include "string.h"
+#include <iostream>
+using namespace std;
 
 
-void NormalizeArrayKmerFreq(KmerFreq array[], int nElements, 
-        string validNucleotides){ 
+
+void ReadArrayKmerFreq(const KmerFreq array[], const int dim, int nElements){
+      for (int i = 0; i < dim; i++)
+      {
+            if (i = 0) //Cambiar esto, condicion: si hay un kmer en la posicion dada.
+            {
+                 nElements++;
+            }
+            
+      }
+      
+}
+
+void PrintArrayKmerFreq(KmerFreq array[], int nElements){
+      cout << "El número de elementos es: " << nElements << "\n";
+
+      for (int i = 0; i < nElements; i++)
+      {
+            cout << array[i].toString() << "\n";
+      }
+      
+}
+
+void SwapElementsArrayKmerFreq(KmerFreq array[], int nElements, int first, int second){
+      if ((first < 0 || first >= nElements) || (second < 0 || second >= nElements))
+      {
+            throw out_of_range("Valor incorrecto de frecuencia.");
+      }
+      else
+      {
+            KmerFreq aux = array[first];
+            array[first] = array[second];
+            array[second] = aux;
+
+      }
+}
+
+
+
+void NormalizeArrayKmerFreq(KmerFreq array[], int nElements, string validNucleotides){ 
     
     // Loop to traverse and normalize each one of the kmers in array
           // Normalize kmer i
@@ -32,4 +73,3 @@ void NormalizeArrayKmerFreq(KmerFreq array[], int nElements,
                //    index and i in the kmer at position index
                // Delete from the array, the kmer at position i 
 }
-
