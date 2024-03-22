@@ -14,3 +14,40 @@
  */
 
 #include "KmerFreq.h"
+#include "Kmer.h"
+#include <string>
+#include <iostream>
+using namespace std;
+
+KmerFreq::KmerFreq(){
+    _kmer = Kmer(1);
+    _frequency = 0;
+}
+
+Kmer KmerFreq::getKmer() const{
+    return _kmer;
+}
+
+int KmerFreq::getFrequency() const{
+    return _frequency;
+}
+
+void KmerFreq::setKmer(Kmer kmer){
+    _kmer = kmer;
+}
+
+void KmerFreq::setFrequency(int frequency){
+    if (frequency < 0)
+    {
+        throw out_of_range("Valor incorrecto de frecuencia.");
+    }
+    else
+    {
+        _frequency = frequency;
+    }
+}
+
+string KmerFreq::toString(){
+    string freq = to_string(_frequency);
+    return _kmer.toString() + freq;                 
+}
