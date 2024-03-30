@@ -16,6 +16,7 @@
 
 #include "ArrayKmerFreqFunctions.h"
 #include "string.h"
+#include <string>
 #include <iostream>
 using namespace std;
 
@@ -24,7 +25,7 @@ using namespace std;
 void ReadArrayKmerFreq(const KmerFreq array[], const int dim, int nElements){
       for (int i = 0; i < dim; i++)
       {
-            if (i = 0) //Cambiar esto, condicion: si hay un kmer en la posicion dada.
+            if (!array[i].getKmer().toString().empty()) //Cambiar esto, condicion: si hay un kmer en la posicion dada.
             {
                  nElements++;
             }
@@ -57,19 +58,77 @@ void SwapElementsArrayKmerFreq(KmerFreq array[], int nElements, int first, int s
       }
 }
 
+int FindKmerInArrayKmerFreq(KmerFreq array[], Kmer kmer, int initialPos, int finalPos){
+    for(int i=initialPos; i<=finalPos; i++){
+        if(array[i].getKmer().toString() == kmer.toString()){
+            return i;
+        }
+    }
+    
+    return -1;
+}
 
+void SortArrayKmerFreq(KmerFreq array[], int nElements){
+    for(int i = 0; i < nElements; i++){
+        for(int j = i + 1; j < nElements; j++){
+            if (array[j].getFrequency() < array[i].getFrequency() || (array[i].getFrequency() == array[j].getFrequency() && array[i].getKmer().toString() > array[j].getKmer().toString())) {
+                SwapElementsArrayKmerFreq(array, nElements, i, j);
+            }
+        }
+    }
+}
 
 void NormalizeArrayKmerFreq(KmerFreq array[], int nElements, string validNucleotides){ 
     
     // Loop to traverse and normalize each one of the kmers in array
-          // Normalize kmer i
+    for(int i=0; i<nElements; i++){
+        Kmer currentKmer(array[i].getKmer());
+        currentKmer.normalize(validNucleotides);
+        array[i].setKmer(currentKmer.toString());
+    }
     
+    for(int i=1; i<nElements; i++){
+        int index = -1;
+        bool encontrado = false;
+        
+        for(int j=0; j<i && !encontrado; j++){
+            if(array[i].getKmer().toString() == array[j].getKmer().toString()){
+                index = j;
+                encontrado = true;
+            }
+        }
+        
+        if(index!=-1){
+            array[index].setFrequency(array[index].getFrequency()+array[i].getFrequency());
+            for(int k=i; k<nElements-1; k++){
+                array[k] = array[k+1];
+            }
+            
+            nElements--;
+            i--;
+        }
+    } 
+}
+
+void DeletePosArrayKmerFreq(KmerFreq array[], int nElements, int pos){
+    if(pos < 0 || pos >= nElements){
+        throw out_of_range("El elemento a borrar no se encuntra en el array");
+    }
     
-    // Loop to traverse the kmers in array from position 1 to position nElements-1
-          // index = Position of array[i].getKmer() in the subarray that begins
-          //         at position 0 and ends at position i-1
-          // If array[i].getKmer() was found in the the subarray from 0 to i-1 
-               // Accumulate the frequencies of the kmers at positions 
-               //    index and i in the kmer at position index
-               // Delete from the array, the kmer at position i 
+    for(int i=pos; i<nElements-1; i++){
+        array[i] = array[i+1];
+    }
+    
+    nElements--;
+}void ZipArrayKmerFreq(KmerFreq array[], int nElements, bool deleteMissing, int lowerBound){
+    int cont=0;
+    
+    for(int i=0; i<nElements; i++){
+        if(!deleteMissing /*&& !array[i].getKmer().toString().find(UNKNOWN_NUCLEOTIDE)*/ || array[i].getFrequency() > lowerBound){
+            array[cont] = array[i];
+            cont++;
+        }
+    }
+    
+    nElements = cont;
 }

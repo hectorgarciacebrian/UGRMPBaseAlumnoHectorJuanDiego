@@ -38,14 +38,14 @@ public:
      * Query method
      * @return A const reference to the Kmer of this KmerFreq object
      */
-    Kmer getKmer();
+    Kmer getKmer() const;
 
     /**
      * @brief Gets the frequency of this KmerFreq object
      * Query method
      * @return The frequency of this KmerFreq object
      */
-    int getFrequency();
+    int getFrequency() const;
 
     /**
      * @brief Sets the Kmer of this KmerFreq object.

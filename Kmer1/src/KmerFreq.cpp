@@ -20,7 +20,7 @@
 using namespace std;
 
 KmerFreq::KmerFreq(){
-    _kmer = Kmer(1);
+    _kmer = Kmer();
     _frequency = 0;
 }
 

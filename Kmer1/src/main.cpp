@@ -9,6 +9,8 @@
  * @author Andrés Cano Utrera <acu@decsai.ugr.es>
  * @author Luis Castillo Vidal <L.Castillo@decsai.ugr.es>
  * @author Javier Martínez Baena <jbaena@ugr.es>
+ * 
+ * @autor Héctor García Cebrián y Juan Diego Martín Payan
  *
  * Created on 27 October 2023, 12:00
  */
@@ -57,18 +59,32 @@ int main(int argc, char* argv[]) {
     int nKmers; // Number of elements in the array kmers
 
     // Read an integer n (number of pairs to read)
+    cout<<"Introduzca un numero entero: ";
+    cin >> nKmers;
     
     // Read the n pairs kmers-frequency from the standard input and put them 
     //      in the array kmers
+    for(int i=0; i<nKmers; i++){
+        string kmer;
+        int frecuencia;
+        cin >> kmer >> frecuencia;
+        kmers[i].setKmer(kmer);
+        kmers[i].setFrequency(frecuencia);
+    }
     
     // Normalizes each kmer in the array kmers
+    NormalizeArrayKmerFreq(kmers, nKmers, VALID_NUCLEOTIDES);
     
     // Zip the kmers in the array kmers
+    ZipArrayKmerFreq(kmers, nKmers, true, 0);
     
     // Sort the array kmers
-    
+    SortArrayKmerFreq(kmers, nKmers);
     // Print the array kmers in the standard output
-
+    for(int i=0; i<nKmers; i++){
+        cout << kmers[i].toString() << endl;
+    }
+    
     return 0;
 }
 
