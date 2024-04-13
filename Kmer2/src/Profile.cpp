@@ -14,6 +14,8 @@
  */
 
 
+#include <fstream>
+
 #include "Profile.h"
 
 using namespace std;
@@ -23,7 +25,6 @@ const string Profile::MAGIC_STRING_T="MP-KMER-T-1.0";
 Profile::Profile(){
     _profileId = "Unknown";
     _size = 0;
-    _vectorKmerFreq[DIM_VECTOR_KMER_FREQ];
 }
 
 Profile::Profile(int size) : _size(size){
@@ -130,6 +131,123 @@ void Profile::sort(){
                 }  
             }  
         }
+    }
+}
+
+void Profile::save(char fileName[]){
+    ofstream file(fileName);
+    if(!file.is_open()){
+        throw ios_base::failure("Error opening file");
+    }
+    
+    file << _profileId << endl;
+    file << _size << endl;
+    
+    for(int i=0; i<_size; i++){
+        file << _vectorKmerFreq[i].toString() << endl;
+    }
+    
+    file.close();
+}
+
+void Profile::load(char fileName[]){
+    ifstream file(fileName);
+    if(!file.is_open()){
+        throw ios_base::failure("Error opening file");
+    }
+    
+    string magic;
+    getline(file, magic);
+    if(magic != MAGIC_STRING_T){
+        throw invalid_argument("Invalid magic string");
+    }
+    
+    getline(file, _profileId);
+    int newSize;
+    file >> newSize;
+    file.ignore();
+    
+    if(newSize > DIM_VECTOR_KMER_FREQ){
+        throw out_of_range("Number of kmers in file exceeds maximum capacity");
+        
+    }
+        
+    if (newSize < 0) {
+       throw out_of_range("Number of kmers in file is negative");
+    }
+    
+    _size = newSize;
+
+    for(int i=0; i<_size; i++){
+        string kmerStr;
+        int freq;
+        file >> kmerStr >> freq;
+        Kmer kmer(kmerStr);
+        _vectorKmerFreq[i].setKmer(kmer);
+        _vectorKmerFreq[i].setFrequency(freq);
+    }
+}
+
+void Profile::append(KmerFreq kmerFreq){
+    int index = -1;
+    if(_size >= DIM_VECTOR_KMER_FREQ){
+       throw std::out_of_range("Array capacity exceeded");
+    }
+    
+    index = findKmer(kmerFreq.getKmer());
+    
+    if(index != -1){
+        _vectorKmerFreq[index].setFrequency(_vectorKmerFreq[index].getFrequency() + kmerFreq.getFrequency());
+    }else{
+        _vectorKmerFreq[_size++] = kmerFreq;
+    }
+}
+
+void Profile::normalize(string validNucleotides){
+    for(int i=0; i<_size; i++){
+        int index = -1;
+        Kmer kmer = _vectorKmerFreq[i].getKmer();
+        int freq = _vectorKmerFreq[i].getFrequency();
+        
+        kmer.normalize(validNucleotides);
+        
+        index = findKmer(kmer);
+        if(index != -1){
+            _vectorKmerFreq[index].setFrequency(_vectorKmerFreq[index].getFrequency() + freq);
+            deletePos(i);
+            i--;
+        }else{
+            _vectorKmerFreq[i].setKmer(kmer);
+        }
+    }
+}
+
+void Profile::deletePos(int pos){
+    if(pos < 0 || pos >= _size){
+        throw out_of_range("Invalid position");
+    }
+    
+    for(int i=pos; i<_size-1; i++){
+        _vectorKmerFreq[i] = _vectorKmerFreq[i+1];
+    }
+    
+    _size--;
+}
+
+void Profile::zip(bool deleteMissing, int lowerBound){
+    int i=0;
+    while(i<_size){
+        if(deleteMissing || _vectorKmerFreq[i].getFrequency() <= lowerBound){
+            deletePos(i);
+        }else{
+            i++;
+        }
+    }
+}
+
+void Profile::join(Profile profile){
+    for(int i=0; i<profile.getSize(); i++){
+        append(profile.at(i));
     }
 }
 

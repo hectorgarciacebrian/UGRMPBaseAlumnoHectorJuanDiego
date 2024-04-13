@@ -54,7 +54,7 @@ public:
      * Query method
      * @return A const reference to the identifier of this profile object
      */
-    std::string getProfileId();
+    std::string getProfileId() const;
 
     /**
      * @brief Sets a new identifier for this profile object.
@@ -73,7 +73,7 @@ public:
      * given index is not valid
      * @return A const reference to the KmerFreq at the given position
      */
-    KmerFreq at(int index); 
+    KmerFreq at(int index) const; 
 
     /**
      * @brief Gets a reference to the KmerFreq at the given position of the 
@@ -91,14 +91,14 @@ public:
      * Query method
      * @return The number of KmerFreq objects 
      */
-    int getSize();
+    int getSize() const;
     
     /**
      * @brief Gets the capacity of the vector of KmerFreq objects.
      * Query method
      * @return The capacity of the vector of KmerFreq objects
      */
-    int getCapacity();
+    int getCapacity() const;
     
     /**
      * @brief Searchs the given kmer in the list of kmers in this
@@ -157,7 +157,7 @@ public:
      * if the given file cannot be opened or if an error occurs while writing
      * to the file
      */
-    void save(char fileName[]) 
+    void save(char fileName[]);
 
     /**
      * @brief Loads into this object the Profile object stored in the given 

@@ -7,21 +7,21 @@ CND_BASEDIR=`pwd`
 CND_BUILDDIR=build
 CND_DISTDIR=dist
 # Debug configuration
-CND_PLATFORM_Debug=GNU-Linux
-CND_ARTIFACT_DIR_Debug=dist/Debug/GNU-Linux
+CND_PLATFORM_Debug=MinGW-Windows
+CND_ARTIFACT_DIR_Debug=dist/Debug/MinGW-Windows
 CND_ARTIFACT_NAME_Debug=kmer2
-CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux/kmer2
-CND_PACKAGE_DIR_Debug=dist/Debug/GNU-Linux/package
+CND_ARTIFACT_PATH_Debug=dist/Debug/MinGW-Windows/kmer2
+CND_PACKAGE_DIR_Debug=dist/Debug/MinGW-Windows/package
 CND_PACKAGE_NAME_Debug=kmer2.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux/package/kmer2.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/MinGW-Windows/package/kmer2.tar
 # Release configuration
-CND_PLATFORM_Release=GNU-Linux
-CND_ARTIFACT_DIR_Release=dist/Release/GNU-Linux
+CND_PLATFORM_Release=MinGW_TDM-Windows
+CND_ARTIFACT_DIR_Release=dist/Release/MinGW_TDM-Windows
 CND_ARTIFACT_NAME_Release=kmer2
-CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux/kmer2
-CND_PACKAGE_DIR_Release=dist/Release/GNU-Linux/package
+CND_ARTIFACT_PATH_Release=dist/Release/MinGW_TDM-Windows/kmer2
+CND_PACKAGE_DIR_Release=dist/Release/MinGW_TDM-Windows/package
 CND_PACKAGE_NAME_Release=kmer2.tar
-CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux/package/kmer2.tar
+CND_PACKAGE_PATH_Release=dist/Release/MinGW_TDM-Windows/package/kmer2.tar
 #
 # include compiler specific variables
 #

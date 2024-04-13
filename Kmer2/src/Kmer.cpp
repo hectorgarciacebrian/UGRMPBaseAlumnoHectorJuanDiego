@@ -14,6 +14,7 @@
  */
 
 #include "../include/Kmer.h"
+#include <string>
 using namespace std; 
 
 Kmer::Kmer(int k){
