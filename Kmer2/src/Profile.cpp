@@ -15,6 +15,7 @@
 
 
 #include <fstream>
+#include <algorithm>
 
 #include "Profile.h"
 
@@ -29,7 +30,7 @@ Profile::Profile(){
 
 Profile::Profile(int size) : _size(size){
     _profileId = "Unknown";
-    if (size > 0 || size < DIM_VECTOR_KMER_FREQ)
+    if (size < 0 || size >= DIM_VECTOR_KMER_FREQ)
     {
         throw out_of_range("El tamaño está fuera del rango permitido");
     }
@@ -50,7 +51,7 @@ void Profile::setProfileId(std::string id){
 }
 
 KmerFreq Profile::at(int index) const{
-    if (index > 0 || index < _size)
+    if (index < 0 || index >= _size)
     {
         throw out_of_range("El tamaño está fuera del rango permitido");
     }
@@ -59,7 +60,7 @@ KmerFreq Profile::at(int index) const{
 }
 
 KmerFreq Profile::at(int index){
-    if (index > 0 || index < _size)
+    if (index < 0 || index >= _size)
     {
         throw out_of_range("El tamaño está fuera del rango permitido");
     }
@@ -77,12 +78,12 @@ int Profile::getCapacity() const{
 
 
 int Profile::findKmer(Kmer kmer, int initialPos, int finalPos){
-    if (initialPos < 0 || initialPos > _size || finalPos < initialPos || finalPos < 0 || finalPos > _size)
+    if (initialPos < 0 || initialPos >= _size || finalPos < initialPos || finalPos < 0 || finalPos > _size)
     {
         throw out_of_range("El tamaño está fuera del rango permitido");
     }
 
-    for (int i = initialPos; i < finalPos; i++)
+    for (int i = initialPos; i <= finalPos; i++)
     {
         if (_vectorKmerFreq[i].getKmer().toString() == kmer.toString())
         {
@@ -94,7 +95,7 @@ int Profile::findKmer(Kmer kmer, int initialPos, int finalPos){
 
 int Profile::findKmer(Kmer kmer){
 
-    for (int i = 0; i < this->getSize() - 1; i++)
+    for (int i = 0; i < this->getSize(); i++)
     {
         if (_vectorKmerFreq[i].getKmer().toString() == kmer.toString())
         {
@@ -108,17 +109,17 @@ string Profile::toString(){
     string resultado = " ";
     resultado = resultado + _profileId + "\n";
     resultado = resultado + to_string(this->getSize()) + "\n";
-    for (int i = 0; i < this->getSize() - 1; i++)
+    for (int i = 0; i < this->getSize(); i++)
     {
-        resultado = resultado + this->at(i).toString() + " ";
+        resultado += _vectorKmerFreq[i].toString() + " ";
     }
 
     return resultado;
 }
 
 void Profile::sort(){
-    for (int i = 0; i < this->getSize() - 1; ++i) {
-        for (int j = 0; j < this->getSize() - i - 1; ++j) {
+    for (int i = 0; i < this->getSize(); i++) {
+        for (int j = 0; j < this->getSize() - i - 1; j++) {
             if (_vectorKmerFreq[j].getFrequency() < _vectorKmerFreq[j + 1].getFrequency()) 
             {
                 swap(_vectorKmerFreq[j], _vectorKmerFreq[j + 1]);
@@ -140,11 +141,12 @@ void Profile::save(char fileName[]){
         throw ios_base::failure("Error opening file");
     }
     
+    file << MAGIC_STRING_T << endl;
     file << _profileId << endl;
     file << _size << endl;
     
     for(int i=0; i<_size; i++){
-        file << _vectorKmerFreq[i].toString() << endl;
+        file << _vectorKmerFreq[i].getKmer().toString() << " " << endl;
     }
     
     file.close();
@@ -235,14 +237,15 @@ void Profile::deletePos(int pos){
 }
 
 void Profile::zip(bool deleteMissing, int lowerBound){
-    int i=0;
-    while(i<_size){
-        if(deleteMissing || _vectorKmerFreq[i].getFrequency() <= lowerBound){
-            deletePos(i);
-        }else{
-            i++;
+    int newSize = 0;
+    for(int i=0; i<_size; i++){
+        if(!deleteMissing /*&& !array[i].getKmer().toString().find(UNKNOWN_NUCLEOTIDE)*/ || _vectorKmerFreq[i].getFrequency() > lowerBound){
+            _vectorKmerFreq[newSize] = _vectorKmerFreq[i];
+            newSize++;
         }
     }
+    
+    _size = newSize;
 }
 
 void Profile::join(Profile profile){
