@@ -75,16 +75,69 @@ Identifier of the farthest profile: worm
  */
 int main(int argc, char* argv[]) {
     
-    // Process the main() arguments
+    // Verificar que se proporcionen al menos 2 archivos Profile
+    if (argc < 3)
+    {
+        cerr << "Se necesitan al menos 2 archivos Profile\n";
+        return -1;
+    }
     
-    // Allocate a dynamic array of Profiles
+    // Cargar el primer perfil desde el primer archivo
+    Profile firstProfile;
+    try {
+        firstProfile.load(argv[1]);
+    } catch (const ios_base::failure& e) {
+        cerr << "Error al cargar el primer perfil: " << e.what() << endl;
+        return -1;
+    }
     
-    // Load the input Profiles
+    // Cargar el resto de los perfiles en un array dinámico
+    Profile* profileArray = new Profile[argc - 2];
+    for (int i = 2; i < argc; ++i)
+    {
+        try {
+            profileArray[i - 2].load(argv[i]);
+        } catch (const ios_base::failure& e) {
+            cerr << "Error al cargar el perfil " << argv[i] << ": " << e.what() << endl;
+            // Liberar la memoria antes de salir
+            delete[] profileArray;
+            return -1;
+        }
+    }
     
-    // Calculate and print the distance from the first Profile to the rest
+    // Calcular y mostrar la distancia desde el primer perfil al resto
+    for (int i = 0; i < argc - 2; ++i)
+    {
+        double distance = firstProfile.getDistance(profileArray[i]);
+        cout << "Distancia a " << argv[i + 2] << ": " << distance << endl;
+    }
     
-    // Print name of the file and identifier that takes min|max distance to the first one
+    // Encontrar el perfil con la distancia mínima o máxima
+    double minDistance = firstProfile.getDistance(profileArray[0]);
+    double maxDistance = firstProfile.getDistance(profileArray[0]);
+    string minProfileName = argv[2];
+    string maxProfileName = argv[2];
+    for (int i = 1; i < argc - 2; ++i)
+    {
+        double distance = firstProfile.getDistance(profileArray[i]);
+        if (distance < minDistance)
+        {
+            minDistance = distance;
+            minProfileName = argv[i + 2];
+        }
+        if (distance > maxDistance)
+        {
+            maxDistance = distance;
+            maxProfileName = argv[i + 2];
+        }
+    }
 
-    // Deallocate the dynamic array of Profile
+    // Mostrar el nombre del archivo y el identificador del perfil con la distancia mínima o máxima
+    cout << "Perfil más cercano: " << minProfileName << " (distancia: " << minDistance << ")" << endl;
+    cout << "Perfil más lejano: " << maxProfileName << " (distancia: " << maxDistance << ")" << endl;
+
+    // Liberar el array dinámico de Profile
+    delete[] profileArray;
+    
     return 0;
 }
