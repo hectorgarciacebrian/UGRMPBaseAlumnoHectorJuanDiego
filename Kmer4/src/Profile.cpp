@@ -130,9 +130,8 @@ double Profile::getDistance(Profile otherProfile){
     
     for(int i=0; i<_size; i++){
         int pos1 = i;
-        KmerFreq Kmer1 = _vectorKmerFreq[i];
-        Kmer kmer = Kmer1.getKmer();
-        int pos2 = otherProfile.findKmer(kmer);
+        Kmer kmer1 = _vectorKmerFreq[i].getKmer();
+        int pos2 = otherProfile.findKmer(kmer1);
         if(pos2 == -1){
             pos2 = 15;
         }
