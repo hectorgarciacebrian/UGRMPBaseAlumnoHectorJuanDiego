@@ -1,7 +1,4 @@
-/*
- * Metodología de la Programación: Kmer0
- * Curso 2023/2024
- */
+
 
 /** 
  * @file Kmer.cpp
@@ -13,7 +10,8 @@
  * Created on 24 October 2023, 14:00
  */
 
-#include "../include/kmer.h"
+#include "../include/Kmer.h"
+#include <string>
 using namespace std; 
 
 Kmer::Kmer(int k){
@@ -92,14 +90,6 @@ Kmer Kmer::complementary(const string& nucleotides, const string& complementaryN
     
 }
 
-void Kmer::write(ostream &outputStream){
-    outputStream << _text;
-}
-
-void Kmer::read(istream &inputStream){
-    inputStream >> _text;
-}
-
 bool IsValidNucletoide(char nucletoide, const string & validNucletoides){
     for(int i=0; i<validNucletoides.length(); i++){
         if(nucletoide == validNucletoides[i]){
@@ -122,14 +112,15 @@ void ToUpper(Kmer& kmer){
     }
 }
 
-ostream operator<<(std::ostream &os, Kmer &kmer){
-    kmer.write(os);
-    
+ostream& operator<<(ostream& os, const Kmer& kmer) {
+    os << kmer.toString();
     return os;
 }
 
-istream operator>>(std::istream &is, Kmer &kmer){
-    kmer.read(is);
- 
+istream& operator>>(istream& is, Kmer& kmer) {
+    string input;
+    is >> input;
+    kmer = Kmer(input); // Reasignar el objeto kmer
     return is;
 }
+
