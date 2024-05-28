@@ -1,5 +1,5 @@
 /*
- * Metodología de la Programación: Kmer5
+ * Metodología de la Programación: Kmer4
  * Curso 2023/2024
  */
 
@@ -18,6 +18,7 @@
 
 #include <iostream>
 #include <string>
+using namespace std;
 
 /**
  * @class Kmer
@@ -138,22 +139,7 @@ public:
      */
     Kmer complementary(const std::string& nucleotides, 
          const std::string& complementaryNucleotides) const;
-    
-    /**
-     * @brief Writes this object to the given output stream. All the characters in
-     * the string of this Kmer (including '\0') are sent to the ouput stream.
-     * Query method
-     * @param outputStream An output stream where this object will be written
-     */
-    void write(std::ostream &outputStream);
-    
-    /**
-     * @brief Reads this object from the given input stream. It reads characters
-     * from the given input stream and put them in the text of this Kmer
-     * Modifier method
-     * @param inputSstream An input stream from which this object will be read
-     */
-    void read(std::istream &inputStream);
+
     
 private:
     /**
@@ -189,23 +175,24 @@ void ToLower(Kmer& kmer);
  */
 void ToUpper(Kmer& kmer);
 
-/**
- * @brief Overloading of the stream insertion operator for Kmer class. It 
- * inserts the characters (nucleotides) of the given Kmer in the output string.
- * @param os The output stream to be used. Output parameter
- * @param kmer the Kmer object. Input parameter
- * @return @p os A reference to the output stream
- */
-std::ostream operator<<(std::ostream &os, Kmer &kmer);
 
 /**
- * @brief Overloading of the stream extraction operator for Kmer class. It
- * reads a list of characters from the input string that will set the
- * list of nucleotides of the given Kmer.
- * @param is The input stream to be used. Output parameter
- * @param kmer the Kmer object. Output parameter
- * @return @p is the input stream
- */
-std::istream operator>>(std::istream &is, Kmer &kmer);
+* @brief Overloading of the stream insertion operator for Kmer class. It
+* inserts the characters ( nucleotides ) of the given Kmer in the output string.
+* @param os The output stream to be used . Output parameter
+* @param kmer the Kmer object . Input parameter
+* @return @p os A reference to the output stream
+*/
+std::ostream &operator<<(std::ostream &os , const Kmer &kmer );
+/**
+* @brief Overloading of the stream extraction operator for Kmer class. It
+* reads a list of characters from the in put stringthatwill set the
+* list of nucleotides of the given Kmer.
+* @param is The input stream to be used
+* @param kmer the Kmer object
+* @return @p is the input stream
+*/
+std::istream &operator>>(std::istream &is , Kmer &kmer ) ;
+
 
 #endif /* KMER_H */
