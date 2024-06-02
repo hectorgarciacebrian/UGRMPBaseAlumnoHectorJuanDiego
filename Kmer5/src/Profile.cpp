@@ -5,22 +5,21 @@
 
 /** 
  * @file Profile.cpp
- * @author Silvia Acid Carrillo <acid@decsai.ugr.es>
- * @author Andrés Cano Utrera <acu@decsai.ugr.es>
- * @author Luis Castillo Vidal <L.Castillo@decsai.ugr.es>
- * @author Javier Martínez Baena <jbaena@ugr.es>
+ * @author Juan Diego Martín Payán
+ * @author Hector García Cebrian
  * 
- * Created on 22 December 2023, 10:00
+ * 
  */
 
+
 #include <fstream>
+#include <algorithm>
 
 #include "Profile.h"
 
 using namespace std;
 
 const string Profile::MAGIC_STRING_T="MP-KMER-T-1.0";
-const string Profile::MAGIC_STRING_B="MP-KMER-B-1.0";
 
 void Profile::allocate(int capacity){
     _vectorKmerFreq = new KmerFreq[capacity];
@@ -186,13 +185,13 @@ string Profile::toString(){
 void Profile::sort(){
     for (int i = 0; i < this->getSize(); i++) {
         for (int j = 0; j < this->getSize() - i - 1; j++) {
-            if (_vectorKmerFreq[j] < _vectorKmerFreq[j + 1]) 
+            if (_vectorKmerFreq[j].getFrequency() < _vectorKmerFreq[j + 1].getFrequency()) 
             {
                 swap(_vectorKmerFreq[j], _vectorKmerFreq[j + 1]);
             }
-            else if (_vectorKmerFreq[j] == _vectorKmerFreq[j + 1])
+            else if (_vectorKmerFreq[j].getFrequency() == _vectorKmerFreq[j + 1].getFrequency())
             {
-                if (_vectorKmerFreq[j] > _vectorKmerFreq[j + 1])
+                if (_vectorKmerFreq[j].toString()[0] > _vectorKmerFreq[j + 1].toString()[0])
                 {
                     swap(_vectorKmerFreq[j], _vectorKmerFreq[j + 1]);
                 }  
@@ -201,34 +200,23 @@ void Profile::sort(){
     }
 }
 
-void Profile::save(char fileName[], char mode){
+void Profile::save(char fileName[], char t){
     ofstream file(fileName);
-    if(mode == 'b'){
-        file.open(fileName, ios::binary);
-        file << MAGIC_STRING_B << endl;
-        file << _profileId << endl;
-        file << _size << endl;
-        
-        for(int i=0; i<_size; i++){
-            file.write(_vectorKmerFreq[i].toString(), _vectorKmerFreq[i].getKmer().size());
-        }
-    }
-    else if(mode == 't'){
-        file.open(fileName, ios::out);
-        file << MAGIC_STRING_T << endl;
-        file << _profileId << endl;
-        file << _size << endl;
-        
-        for(int i=0; i<_size; i++){
-            file << _vectorKmerFreq[i].toString();
-        }
-    }
-    else{
-        throw invalid_argument("El modo seleccionado no esta dentro de los permitidos");
+    if(!file.is_open()){
+        throw ios_base::failure("Error al abrir el archivo");
     }
     
-    if(!file.is_open()){
-        throw ios_base::failure("Error opening file");
+    if(t != 't' && t != 'b'){
+        throw invalid_argument("Error en el tipo de lectura");
+    }
+    
+    
+    file << MAGIC_STRING_T << endl;
+    file << _profileId << endl;
+    file << _size << endl;
+    
+    for(int i=0; i<_size; i++){
+        file << _vectorKmerFreq[i].getKmer().toString() << " " << endl;
     }
     
     file.close();
@@ -242,7 +230,7 @@ void Profile::load(char fileName[]){
     
     string magic;
     getline(file, magic);
-    if(magic != MAGIC_STRING_T && magic != MAGIC_STRING_B){
+    if(magic != MAGIC_STRING_T){
         throw invalid_argument("Invalid magic string");
     }
     
@@ -251,7 +239,7 @@ void Profile::load(char fileName[]){
     file >> newSize;
     file.ignore();
     
-    if(newSize >= _capacity){
+    if(newSize > _capacity){
         reallocate(_capacity + BLOCK_SIZE);
         
     }
@@ -330,7 +318,7 @@ void Profile::zip(bool deleteMissing, int lowerBound){
     _size = newSize;
 }
 
-void Profile::deprecated(Profile profile){
+void Profile::join(Profile profile){
     for(int i=0; i<profile.getSize(); i++){
         append(profile.at(i));
     }
@@ -344,57 +332,64 @@ KmerFreq Profile::operator[](int index){
     return _vectorKmerFreq[index];
 }
 
-Profile Profile::operator+=(KmerFreq kmerFreq){
-    bool encontrado = false;
-    
-    for(int i=0; i<_size; i++){
-        if(_vectorKmerFreq[i] == kmerFreq){
-            int frecuencia = _vectorKmerFreq[i].getFrequency() + kmerFreq.getFrequency();
-            _vectorKmerFreq[i].setFrequency(frecuencia);
-            encontrado = true;
-        }
+Profile Profile::operator+=(KmerFreq &kmerFreq){
+    int index = -1;
+    if(_size >= _capacity){
+        reallocate(_capacity + BLOCK_SIZE);
     }
     
-    if(!encontrado){
-        if(_size >= _capacity){
-            reallocate(_capacity + BLOCK_SIZE);
-        }
-        
-        _vectorKmerFreq[size++] = kmerFreq;
+    index = findKmer(kmerFreq.getKmer());
+    
+    if(index != -1){
+        _vectorKmerFreq[index].setFrequency(_vectorKmerFreq[index].getFrequency() + kmerFreq.getFrequency());
+    }else{
+        _vectorKmerFreq[_size++] = kmerFreq;
     }
     
-    return *this;
+    return (*this);
 }
 
-Profile Profile::operator+=(Profile profile){
-    for(int j=0; j<profile.getSize(); j++){
-        bool encontrado = false;
-        for(int i=0; i<_size; i++){
-            if(_vectorKmerFreq[i].getKmer() == profile._vectorKmerFreq[j].getKmer()){
-                int frecuencia = _vectorKmerFreq[i].getFrequency() + profile._vectorKmerFreq[j].getFrequency();
-                _vectorKmerFreq[i].setFrequency(frecuencia);
-                encontrado = true;
-            }
-        }
-        if(!encontrado){
-            if(_size>=_capacity){
-                reallocate(_capacity + BLOCK_SIZE);
-            }
-
-            _vectorKmerFreq[size++] = profile._vectorKmerFreq[j];
-        }
+Profile Profile::operator+=(Profile &profile){
+    for(int i=0; i<profile.getSize(); i++){
+        append(profile.at(i));
     }
     
-    return *this;
+    return (*this);
 }
 
-ostream operator<<(ostream os, Profile &profile){
-    os << profile.toString();
-    
+ostream& operator<<(ostream &os, const Profile &profile) {
+    os << Profile::MAGIC_STRING_T << "\n";
+    os << profile._profileId << "\n";
+    os << profile._size << "\n";
+    for (int i = 0; i < profile._size; i++) {
+        os << profile._vectorKmerFreq[i].getKmer().toString() << " " << profile._vectorKmerFreq[i].getFrequency() << "\n";
+    }
     return os;
 }
 
+istream& operator>>(istream &is, Profile &profile) {
+    string magic;
+    getline(is, magic);
+    if (magic != Profile::MAGIC_STRING_T) {
+        throw invalid_argument("Invalid magic string");
+    }
 
-istream operator>>(istream is, Profile &profile){
-    profile.d
+    getline(is, profile._profileId);
+    is >> profile._size;
+    is.ignore();
+
+    if (profile._size > profile._capacity) {
+        profile.reallocate(profile._size);
+    }
+
+    for (int i = 0; i < profile._size; i++) {
+        string kmerStr;
+        int freq;
+        is >> kmerStr >> freq;
+        Kmer kmer(kmerStr);
+        profile._vectorKmerFreq[i].setKmer(kmer);
+        profile._vectorKmerFreq[i].setFrequency(freq);
+    }
+
+    return is;
 }
