@@ -1,16 +1,14 @@
 /*
- * Metodología de la Programación: Kmer1
+ * Metodología de la Programación: Kmer5
  * Curso 2023/2024
  */
 
 /** 
  * @file KmerFreq.cpp
- * @author Silvia Acid Carrillo <acid@decsai.ugr.es>
- * @author Andrés Cano Utrera <acu@decsai.ugr.es>
- * @author Luis Castillo Vidal <L.Castillo@decsai.ugr.es>
- * @author Javier Martínez Baena <jbaena@ugr.es>
+ * @author Hector García Cebrian
+ * @author Juan Diego Martín Payán
  * 
- * Created on 27 de octubre de 2023, 11:03
+ * 
  */
 
 #include "KmerFreq.h"
@@ -52,74 +50,63 @@ string KmerFreq::toString(){
     return _kmer.toString() + freq;                 
 }
 
-void KmerFreq::write(ostream &outputStream){
-    outputStream << _kmer.toString() << " " << _frequency;
+bool operator>(const KmerFreq &kmerFreq1, const KmerFreq &kmerFreq2){
+    return (kmerFreq1.getFrequency() > kmerFreq2.getFrequency());
 }
 
-void KmerFreq::read(istream &inputStream){
-    inputStream >> _kmer >> _frequency;
+bool operator<(const KmerFreq &kmerFreq1, const KmerFreq &kmerFreq2){
+    return (kmerFreq1.getFrequency() < kmerFreq2.getFrequency());
 }
 
-ostream operator<<(ostream &os, KmerFreq kmerFreq){
-    kmerFreq.write(os);
+bool operator==(const KmerFreq &kmerFreq1, const KmerFreq &kmerFreq2){
+    if(kmerFreq1.getFrequency() == kmerFreq2.getFrequency()){
+        if(kmerFreq1.getKmer().toString() == kmerFreq2.getKmer().toString()){
+            return true;
+        }
+    }
     
+    return false;
+}
+
+bool operator!=(const KmerFreq &kmerFreq1, const KmerFreq &kmerFreq2){
+    if(kmerFreq1.getFrequency() != kmerFreq2.getFrequency()){
+        if(kmerFreq1.getKmer().toString() != kmerFreq2.getKmer().toString()){
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+bool operator<=(const KmerFreq &kmerFreq1, const KmerFreq &kmerFreq2){
+    return (kmerFreq1.getFrequency() <= kmerFreq2.getFrequency());
+}
+
+bool operator>=(const KmerFreq &kmerFreq1, const KmerFreq &kmerFreq2){
+    return (kmerFreq1.getFrequency() >= kmerFreq2.getFrequency());
+}
+
+ostream& operator<<(ostream& os, KmerFreq& kmerFreq) {
+    os << kmerFreq.toString();
     return os;
 }
 
-istream operator>>(istream &is, KmerFreq kmerFreq){   
-    kmerFreq.read(is);
-    
+istream& operator>>(istream& is, KmerFreq& kmerFreq) {
+    string kmerText;
+    int frequency;
+
+    is >> kmerText >> frequency;
+
+    if (!is) {
+        // Por si hay algún error al leer
+        return is;
+    }
+
+    Kmer kmer(kmerText);
+
+    kmerFreq.setKmer(kmer);
+    kmerFreq.setFrequency(frequency);
+
     return is;
 }
 
-bool operator>(KmerFreq kmerFreq1, KmerFreq kmerFreq2){
-    if(kmerFreq1.getFrequency() > kmerFreq2.getFrequency()){
-        return true;
-    }
-    else if(kmerFreq1.getFrequency() == kmerFreq2.getFrequency() && kmerFreq1.getKmer().toString() > kmerFreq2.getKmer().toString()){
-        return true;
-    }
-    else
-        return false;
-}
-
-bool operator<(KmerFreq kmerFreq1, KmerFreq kmerFreq2){
-    if(!(kmerFreq1 > kmerFreq2)){
-        return true;
-    }
-    else
-        return false;
-}
-
-bool operator==(KmerFreq kmerFreq1, KmerFreq kmerFreq2){
-    if(kmerFreq1.getFrequency() == kmerFreq2.getFrequency()){
-        return true;
-    }
-    else
-        return false;
-}
-
-bool operator!=(KmerFreq kmerFreq1, KmerFreq kmerFreq2){
-    if(!(kmerFreq1 == kmerFreq2)){
-        return true;
-    }
-    else
-        return false;
-}
-
-bool operator<=(KmerFreq kmerFreq1, KmerFreq kmerFreq2){
-    if(kmerFreq1 < kmerFreq2 || kmerFreq1 == kmerFreq2){
-        return true;
-    }
-    else
-        return false;
-}
-
-bool operator>=(KmerFreq kmerFreq1, KmerFreq kmerFreq2){
-    if(kmerFreq1 > kmerFreq2 || kmerFreq1 == kmerFreq2){
-        return true;
-    }
-    else
-        return false;
-}
- 
